@@ -56,7 +56,7 @@ class Extension extends \Nette\DI\CompilerExtension
 	public function loadConfiguration()
 	{
 		$config = $this->getConfig();
-		if ($this->skipIfIsDisabled && (!extension_loaded('newrelic') || !Bootstrap::isEnabled())) {
+		if ($this->skipIfIsDisabled && (!\extension_loaded('newrelic') || !Bootstrap::isEnabled())) {
 			$this->enabled = FALSE;
 		}
 
@@ -90,12 +90,12 @@ class Extension extends \Nette\DI\CompilerExtension
 		$initialize = $class->getMethod('initialize');
 
 		// AppName and license
-		if (isset($config['appName']) && !is_array($config['appName'])) {
+		if (isset($config['appName']) && !\is_array($config['appName'])) {
 			$initialize->addBody('\VrtakCZ\NewRelic\Tracy\Bootstrap::setup(?, ?);', [
 				$config['appName'],
 				isset($config['license']) ? $config['license'] : NULL,
 			]);
-		} elseif (isset($config['appName']) && is_array($config['appName'])) {
+		} elseif (isset($config['appName']) && \is_array($config['appName'])) {
 			if (!isset($config['appName']['*'])) {
 				throw new \RuntimeException('Missing default app name as "*"');
 			}
@@ -107,7 +107,7 @@ class Extension extends \Nette\DI\CompilerExtension
 
 		// Logger
 		$initialize->addBody('\Tracy\Debugger::setLogger(new \VrtakCZ\NewRelic\Tracy\Logger(?));', [
-			array_unique($config['logLevel']),
+			\array_unique($config['logLevel']),
 		]);
 
 		$this->setupCustom($initialize);
@@ -147,7 +147,7 @@ class Extension extends \Nette\DI\CompilerExtension
 			$config['parameters']['capture'],
 		]);
 		$initialize->addBody("ini_set('newrelic.ignored_params', ?);", [
-			implode(',', $config['parameters']['ignored']),
+			\implode(',', $config['parameters']['ignored']),
 		]);
 	}
 
@@ -156,7 +156,7 @@ class Extension extends \Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
 
-		$map = (isset($config['appName']) && is_array($config['appName'])) ? $config['appName'] : [];
+		$map = (isset($config['appName']) && \is_array($config['appName'])) ? $config['appName'] : [];
 		$license = isset($config['license']) ? $config['license'] : NULL;
 
 		$builder->addDefinition($this->prefix('onRequestCallback'))
@@ -184,7 +184,7 @@ class Extension extends \Nette\DI\CompilerExtension
 		$config = $this->getConfig();
 
 		if (isset($config['custom']['parameters'])) {
-			if (!is_array($config['custom']['parameters'])) {
+			if (!\is_array($config['custom']['parameters'])) {
 				throw new \RuntimeException('Invalid custom parameters structure');
 			}
 
@@ -197,7 +197,7 @@ class Extension extends \Nette\DI\CompilerExtension
 		}
 
 		if (isset($config['custom']['tracers'])) {
-			if (!is_array($config['custom']['tracers'])) {
+			if (!\is_array($config['custom']['tracers'])) {
 				throw new \RuntimeException('Invalid custom tracers structure');
 			}
 

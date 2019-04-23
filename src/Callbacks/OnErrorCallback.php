@@ -17,7 +17,7 @@ class OnErrorCallback
 			return;
 		}
 
-		newrelic_notice_error($e->getMessage(), $e);
+		\newrelic_notice_error($e->getMessage(), $e);
 	}
 
 	/**
