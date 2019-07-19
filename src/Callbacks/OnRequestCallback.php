@@ -63,7 +63,7 @@ class OnRequestCallback
 			}
 		}
 
-		if (PHP_SAPI === 'cli') {
+		if (\PHP_SAPI === 'cli') {
 			\newrelic_background_job();
 			\newrelic_name_transaction('$ ' . \basename($_SERVER['argv'][0]) . ' ' . \implode(' ', \array_slice($_SERVER['argv'], 1)));
 		} else {

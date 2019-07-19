@@ -72,7 +72,9 @@ class Extension extends \Nette\DI\CompilerExtension
 
 		if (!extension_loaded('newrelic')) {
 			throw new \RuntimeException('NewRelic extension is not loaded');
-		} elseif (!Bootstrap::isEnabled()) {
+		}
+
+		if (!Bootstrap::isEnabled()) {
 			throw new \RuntimeException('NewRelic is not enabled');
 		}
 
@@ -86,7 +88,7 @@ class Extension extends \Nette\DI\CompilerExtension
 			return;
 		}
 
-		$config = $this->getConfig($this->defaults);
+		$config = $this->getConfig() + $this->defaults;
 		$initialize = $class->getMethod('initialize');
 
 		// AppName and license
