@@ -217,7 +217,7 @@ class Extension extends \Nette\DI\CompilerExtension
 
 	private function setupRUM()
 	{
-		$config = $this->getConfig($this->defaults);
+		$config = $this->getConfig();
 		$builder = $this->getContainerBuilder();
 
 		$rumEnabled = $this->enabled && $config['rum']['enabled'] === TRUE;
