@@ -88,8 +88,14 @@ class Extension extends \Nette\DI\CompilerExtension
 			return;
 		}
 
-		$config = $this->getConfig() + $this->defaults;
 		$initialize = $class->getMethod('initialize');
+		$container = $this->getContainerBuilder();
+
+		foreach ($container->findByTag('newrelic.afterCompile') as $name => $foo) {
+			$initialize->addBody('$this->getService(?);', [$name]);
+		}
+
+		$config = $this->getConfig() + $this->defaults;
 
 		// AppName and license
 		if (isset($config['appName']) && !\is_array($config['appName'])) {
@@ -168,7 +174,7 @@ class Extension extends \Nette\DI\CompilerExtension
 				isset($config['actionKey']) ? $config['actionKey'] : Presenter::ACTION_KEY,
 			])
 			->addSetup('register', ['@\Nette\Application\Application'])
-			->addTag('run', TRUE);
+			->addTag('newrelic.afterCompile', TRUE);
 	}
 
 	private function setupApplicationOnError()
@@ -178,7 +184,7 @@ class Extension extends \Nette\DI\CompilerExtension
 		$builder->addDefinition($this->prefix('onErrorCallback'))
 			->setClass('VrtakCZ\NewRelic\Nette\Callbacks\OnErrorCallback')
 			->addSetup('register', ['@\Nette\Application\Application'])
-			->addTag('run', TRUE);
+			->addTag('newrelic.afterCompile', TRUE);
 	}
 
 	private function setupCustom(Method $initialize)
